@@ -22,7 +22,7 @@ logging.basicConfig(filename=logFile, level=logging.DEBUG)
 # not provided, the user must score the word interactivly.
 def score_word(word, solution):
     if solution is None:
-        score = input(f'\tScore {word} [y=yellow, g=green, x=none]: ')
+        score = input(f'\tSCORE {word} [y=yellow, g=green, x=none]: ')
     else:
         # in order to test the 'auto-solver' mode, need to write this function.
         assert False, 'not implemented yet'
@@ -44,7 +44,7 @@ def main():
     if args.seed is not None:
         word = args.seed
     else:
-        word = input(f'First guess? [enter for random seed]')
+        word = input(f'FIRST GUESS? [enter for random seed] ')
         if (len(word) < 5):
             word = solver.Seed()
 
@@ -63,7 +63,7 @@ def main():
 
         if len(list) > 1:
             print(list)
-            word = input(f'\tNext guess? [enter for random choice] ')
+            word = input(f'\tNEXT GUESS? [enter for random choice] ')
             if (len(word) < 5):
                 word = random.choice(list)
             guesses.append(word)
