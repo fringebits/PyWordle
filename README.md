@@ -1,2 +1,2 @@
-# PiFrame
-Photo slide show project intended to run on RaspberryPi
+# PyWordle
+Simple wordle solver playing with some python concepts.
