@@ -3,7 +3,7 @@ from wordle.solver import Solver
 from wordle.state import State
 
 import argparse
-
+import random
 import os
 import logging
 from logging.handlers import RotatingFileHandler
@@ -17,11 +17,15 @@ if os.path.isfile(logFile):
     handler.doRollover()
 logging.basicConfig(filename=logFile, level=logging.DEBUG)
 
+# given a word, produce a score.  the score is 5 chracters, one of [g,y,x] that
+# represent the accuracy of the word relative to the solution.  If solution is 
+# not provided, the user must score the word interactivly.
 def score_word(word, solution):
     if solution is None:
-        score = input(f'Score {word} [y=yellow, g=green, x=none]:')
+        score = input(f'\tScore {word} [y=yellow, g=green, x=none]: ')
     else:
-        assert(False, 'not implemented yet')
+        # in order to test the 'auto-solver' mode, need to write this function.
+        assert False, 'not implemented yet'
     return score
 
 def main():
@@ -30,40 +34,47 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", help="Debug mode, forces use of windows", action="store_true")
     parser.add_argument("--seed", help="Starting word")
-    parser.add_argument("--solution", help="Solution word")
+    parser.add_argument("--solution", help="Solution word") # to be used to "test" the solver
     args = parser.parse_args()
 
     solver = Solver()
     state = State()
-    state.Print()
+    
+    # get the starting word
+    if args.seed is not None:
+        word = args.seed
+    else:
+        word = input(f'First guess? [enter for random seed]')
+        if (len(word) < 5):
+            word = solver.Seed()
 
-    # score word
-    word = args.seed if args.seed is not None else solver.Seed()
-    list = [0, 0] # just need a list longer than 1
+    done = False
+    guesses = [word]
 
-    while len(list) > 1:
+    while not done:
 
-        print(f'GUESS {word}')
+        print(f'Round {len(guesses)}')
+        print(f'\tGUESS {word}')
         score = score_word(word, args.solution)
 
-        for ii in range(0,5):
-            if score[ii] == 'g':
-                print(f'Adding required letter {word[ii]}, removing it from letter mask[{ii}]')
-                state.required.extend(word[ii])
-                state.mask[ii] = word[ii]
-            elif score[ii] == 'y':
-                print(f'Adding required letter {word[ii]}, removing it from letter mask[{ii}]')
-                state.required.extend(word[ii])
-                state.mask[ii] = state.mask[ii].replace(word[ii], '')
-            else:
-                print(f'Excluding letter {word[ii]}')
-                state.excluded.extend(word[ii])
-
-        state.Print()
+        state.UpdateState(word, score)
 
         list = solver.GetMatchingWords(state)
-        print(list)
-        word = list[0]    
+
+        if len(list) > 1:
+            print(list)
+            word = input(f'\tNext guess? [enter for random choice] ')
+            if (len(word) < 5):
+                word = random.choice(list)
+            guesses.append(word)
+        elif len(list) == 1:
+            guesses.append(list[0])
+            done = True
+
+    print()
+    print()
+    for g in guesses:
+        print(f'{g}')
 
 if __name__ == "__main__":
     main()

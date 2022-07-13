@@ -15,7 +15,8 @@ class Solver:
     def GetMatchingWords(self, state):
         # first, filter word list based on state.required, state.excluded
         words = [word for word in self.words if all(c in word for c in state.required)]
-        words = [word for word in words if not any(c in word for c in state.excluded)]        
+        words = [word for word in words if not any(c in word for c in state.excluded)]    
+        # next, filter based on the regex from the state character mask    
         p = re.compile(state.GetRegex())
         words = [word for word in words if p.match(word)]
         return words
