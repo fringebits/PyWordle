@@ -38,52 +38,18 @@ def main():
     player = HumanPlayer(args.solution)
 
     winner = False
-    guesses = [word]
+    guesses = []
 
     while (len(guesses) < 6) and not winner:
         
         # Get the next guess
-        word = player.GetNextGuess(solver, state)
+        word = player.GetNextGuess(solver, state)    
 
         score = player.ScoreWord(word)
 
-        winner = solver.UpdateState(word, score)
+        print(score)
 
-
-
-
-
-    while not done:
-
-
-        print(f'Round {len(guesses)}')
-        print(f'\tGUESS {word}')
-        score = score_word(word, args.solution)
-        print(f'\tSCORE {score}')
-
-        state.UpdateState(word, score)
-
-        list = solver.GetMatchingWords(state)
-
-        if len(list) > 1:
-            print(list)
-            if args.solution is not None and args.autoplay:
-                word = solver.GetNextGuess(state)
-            else:
-                word = input(f'\tNEXT GUESS? [enter for random choice] ')
-                if (len(word) < 5):
-                    word = solver.GetNextGuess(state)
-            guesses.append(word)
-        elif len(list) == 1:
-            guesses.append(list[0])
-            done = True
-        else:
-            assert False, "List of candidate words is empty!!"
-
-    print()
-    print()
-    for g in guesses:
-        print(f'{g}')
+        winner = state.UpdateState(word, score)
 
 if __name__ == "__main__":
     main()
