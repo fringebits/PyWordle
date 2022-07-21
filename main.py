@@ -1,6 +1,7 @@
 
 from wordle.solver import Solver
 from wordle.state import State
+from wordle.player import HumanPlayer, BotPlayer
 
 import argparse
 import random
@@ -21,39 +22,6 @@ logging.basicConfig(filename=logFile, level=logging.DEBUG)
 # test case
 # --seed raise --solution wedge --autoplay
 
-# given a word, produce a score.  the score is 5 chracters, one of [g,y,x] that
-# represent the accuracy of the word relative to the solution.  If solution is 
-# not provided, the user must score the word interactivly.
-def score_word(word, solution):
-    if solution is None:
-        score = input(f'\tSCORE {word} [y=yellow, g=green, x=none]: ')
-    else:        
-        # in order to test the 'auto-solver' mode, need to write this function.
-        score = ['x', 'x', 'x', 'x', 'x']
-        local = []
-        for ch in solution:
-            local.append(ch)
-
-        print(local)
-
-        for ii in range(0,5):
-            if word[ii] == local[ii]:
-                score[ii] = 'g'
-                local[ii] = '.' # mark this as being 'used'
-        for ii in range(0,5):
-            if score[ii] != 'g':
-                # find out if letter ii is in the solution at all
-                tmp = ''.join(map(str,local))
-                pos = tmp.find(word[ii])
-                if pos != -1:
-                    score[ii] = 'y'
-                    local[ii] = '.'
-
-        print(score)
-
-        score = ''.join(map(str, score))
-    return score
-
 def main():
     logging.debug("PiFrame main")
 
@@ -66,19 +34,28 @@ def main():
 
     solver = Solver()
     state = State()
-    
-    # get the starting word
-    if args.seed is not None:
-        word = args.seed
-    else:
-        word = input(f'FIRST GUESS? [enter for random seed] ')
-        if (len(word) < 5):
-            word = solver.Seed()
 
-    done = False
+    player = HumanPlayer(args.solution)
+
+    winner = False
     guesses = [word]
 
+    while (len(guesses) < 6) and not winner:
+        
+        # Get the next guess
+        word = player.GetNextGuess(solver, state)
+
+        score = player.ScoreWord(word)
+
+        winner = solver.UpdateState(word, score)
+
+
+
+
+
     while not done:
+
+
         print(f'Round {len(guesses)}')
         print(f'\tGUESS {word}')
         score = score_word(word, args.solution)
