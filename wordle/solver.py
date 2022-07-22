@@ -30,5 +30,6 @@ class Solver:
 
     def Seed(self):
         # return a 'seed word'
-        seeds = ['chair', 'chain', 'soare', 'roate', 'raise']
+        seeds = ['crane', 'chair', 'chain', 'soare', 'roate', 'raise']
+        #seeds = ['crane']
         return random.choice(seeds)
