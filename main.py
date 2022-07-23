@@ -4,6 +4,7 @@ from wordle.game import Game
 
 import argparse
 import os
+import random
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -27,6 +28,7 @@ def main():
     parser.add_argument("--debug", help="Debug mode, forces use of windows", action="store_true")
     parser.add_argument("--solution", help="Solution word") # to be used to "test" the solver
     parser.add_argument("--bot", help="Auto-play the game (requires solution)", action="store_true")
+    parser.add_argument("--play", help="Play a game of WORDLE", action="store_true")
     args = parser.parse_args()
 
     # game = Game(BotPlayer(), 'aphid')
@@ -37,8 +39,12 @@ def main():
 
     if args.bot:
         player = BotPlayer()
+        if args.solution is None:
+            args.solution = random.choice(player.words)
     else:
         player = HumanPlayer()
+        if args.solution is None and args.play:
+            args.solution = random.choice(player.words)
 
     game = Game(player, args.solution)
 
