@@ -2,22 +2,23 @@ import re
 
 def remove_letter(mask, letter):
     return mask.replace(letter, '')
-class State:
+
+class Filter:
     All = 'abcdefghijklmnopqrstuvwxyz'
 
     def __init__(self):
-        self.mask = [State.All, State.All, State.All, State.All, State.All]
+        self.mask = [Filter.All, Filter.All, Filter.All, Filter.All, Filter.All]
         self.required = [] # letters REQUIRED for the word
         self.excluded = [] # letters EXCLUDED for the word
 
-    def GetRegex(self):
+    def get_regex(self):
         # make regex for the mask
         result = ''
         for ch in self.mask:
             result = result + f'[{ch}]'
         return result
 
-    def UpdateState(self, word, score):
+    def update_filter(self, word, score):
         for ii in range(0,5):
             if score[ii] == 'g':
                 #print(f'Adding required letter {word[ii]}, removing it from letter mask[{ii}]')
@@ -48,7 +49,7 @@ class State:
             return False
 
         # next, filter based on the regex from the state character mask    
-        p = re.compile(self.GetRegex())
+        p = re.compile(self.get_regex())
         if not p.match(word):
             return False
         return True

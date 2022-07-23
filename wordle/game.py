@@ -3,9 +3,8 @@ import sys
 fpath = os.path.dirname(__file__)
 sys.path.append(fpath)
 
-from solver import Solver
-from state import State
-#from .player import IPlayer
+#from state import State
+#from player import IPlayer
 
 def string_to_array(word):
     local = []
@@ -21,32 +20,30 @@ class Game:
     def __init__(self, player, solution):
         self.player = player
         self.solution = solution
-        self.solver = Solver()
-        self.state = State()
-        self.guesses = []
+ 
+    def num_guesses(self):
+        return self.player.num_guesses()
 
+    def is_valid_word(self, word, verbose):
+        return self.player.filter.is_valid_word(word, verbose)
+ 
     def play_word(self, word):
-        self.guesses.append(word)
 
         score = self.ScoreWord(word)
 
-        winner = self.state.UpdateState(word, score)
+        winner = self.player.play_word(word, score)
 
-        self.solver.GetMatchingWords(self.state)
-
-        print(f'{word} -> {score} ({len(self.solver.words)})')
-
-        #state.print()
+        print(f'{word} -> {score} ({self.player.num_words()})')
 
         return winner
 
     def play(self):
         winner = False
 
-        while (len(self.guesses) < 6) and not winner and len(self.solver.words) > 0:
+        while self.num_guesses() < 6 and not winner and self.player.num_words() > 0:
             
             # Get the next guess
-            word = self.player.GetNextGuess(self.solver, self.state)
+            word = self.player.next_guess()
 
             winner = self.play_word(word)
 
