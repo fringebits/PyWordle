@@ -20,13 +20,19 @@ class Game:
     def __init__(self, player, solution):
         self.player = player
         self.solution = solution
+        self.validate_solution();
  
     def num_guesses(self):
         return self.player.num_guesses()
 
-    def is_valid_word(self, word, verbose):
+    def is_valid_word(self, word, verbose=False):
         return self.player.filter.is_valid_word(word, verbose)
- 
+
+    def validate_solution(self):
+        if not self.solution is None:
+            assert self.is_valid_word(self.solution), f'Solution is no longer valid.'
+            assert self.solution in self.player.words, f'Solution is not in possible words' 
+
     def play_word(self, word):
 
         score = self.ScoreWord(word)
@@ -34,6 +40,8 @@ class Game:
         winner = self.player.play_word(word, score)
 
         print(f'{word} -> {score} ({self.player.num_words()})')
+
+        self.validate_solution()
 
         return winner
 
