@@ -36,7 +36,6 @@ def main():
     # game.state.print()
     # assert game.state.is_valid_word('apart', True)
 
-
     if args.bot:
         player = BotPlayer()
         if args.solution is None:

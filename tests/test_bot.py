@@ -35,3 +35,9 @@ def test_light():
     assert not game.is_valid_word('tight', True)
     assert not 'tight' in game.player.words
     #assert False
+
+def test_rank():
+    bot = BotPlayer()
+    A = bot.rank_word('sire.')
+    B = bot.rank_word('siree')
+    assert A == B

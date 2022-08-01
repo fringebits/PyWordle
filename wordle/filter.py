@@ -34,7 +34,6 @@ class Filter:
                 if not word[ii] in self.required:
                     #print(f'Excluding letter {word[ii]}')
                     self.excluded.extend(word[ii])
-
         return score == 'ggggg'
 
     def is_valid_word(self, word, verbose = False):
